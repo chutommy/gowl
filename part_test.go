@@ -1,4 +1,4 @@
-package gowl
+package gowl_test
 
 import (
 	"io"
@@ -6,34 +6,37 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/chutified/gowl"
 )
 
 func TestPart_Render(t *testing.T) {
 	type fields struct {
-		Header  Header
+		Header  *gowl.Header
 		Content io.Reader
-		Parts   []*Part
+		Parts   []*gowl.Part
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		want   []byte
+		name    string
+		fields  fields
+		want    []byte
+		wantErr error
 	}{
 		{
 			name: "plain and html text",
 			fields: fields{
-				Header: Header{
-					Fields: []Field{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
 						{Name: "Content-Type", Values: []string{"multipart/alternative", "boundary=\"0000000000009c8ab105be4e2cc3\""}},
 					},
 				},
-				Parts: []*Part{
+				Parts: []*gowl.Part{
 					{
-						Header:  Header{Fields: []Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
 						Content: strings.NewReader("This is a test message."),
 					},
 					{
-						Header:  Header{Fields: []Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
 						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
 					},
 				},
@@ -56,24 +59,24 @@ Content-Type: text/html; charset="UTF-8"
 		{
 			name: "text with an attachment",
 			fields: fields{
-				Header: Header{Fields: []Field{{Name: "Content-Type", Values: []string{"multipart/mixed", "boundary=\"0000000000001d296f05be7539bd\""}}}},
-				Parts: []*Part{
+				Header: &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"multipart/mixed", "boundary=\"0000000000001d296f05be7539bd\""}}}},
+				Parts: []*gowl.Part{
 					{
-						Header: Header{Fields: []Field{{Name: "Content-Type", Values: []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""}}}},
-						Parts: []*Part{
+						Header: &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""}}}},
+						Parts: []*gowl.Part{
 							{
-								Header:  Header{Fields: []Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
+								Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
 								Content: strings.NewReader("This is a test file."),
 							},
 							{
-								Header:  Header{Fields: []Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
+								Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
 								Content: strings.NewReader("<div dir=\"ltr\">This is a test file.</div>"),
 							},
 						},
 					},
 					{
-						Header: Header{
-							Fields: []Field{
+						Header: &gowl.Header{
+							Fields: []*gowl.Field{
 								{Name: "Content-Type", Values: []string{"text/plain", "charset=\"US-ASCII\"", "name=\"test.txt\""}},
 								{Name: "Content-Disposition", Values: []string{"attachment", "filename=\"test.txt\""}},
 								{Name: "Content-Transfer-Encoding", Values: []string{"base64"}},
@@ -113,12 +116,24 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &Part{
+			// construct Part
+			p := &gowl.Part{
 				Header:  tt.fields.Header,
 				Content: tt.fields.Content,
 				Parts:   tt.fields.Parts,
 			}
-			require.Equal(t, string(tt.want), string(p.Render()))
+
+			// run Render
+			got, err := p.Render()
+
+			// check returned values
+			if tt.wantErr != nil {
+				require.Nil(t, got)
+				require.ErrorIs(t, err, tt.wantErr)
+			} else {
+				require.Equal(t, string(tt.want), string(got))
+				require.Nil(t, err)
+			}
 		})
 	}
 }

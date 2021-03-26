@@ -2,36 +2,54 @@ package gowl
 
 import (
 	"bytes"
+	"errors"
 	"strings"
+)
+
+// Error codes returned by failures to render to SMTP.
+var (
+	ErrNoValues   = errors.New("the attribute Values of Field is empty")
+	ErrNoBoundary = errors.New("the Header has no Content-Type field with boundary parameter")
 )
 
 // Header represents SMTP Header.
 type Header struct {
-	Fields []Field
+	Fields []*Field
 }
-
-// NewHeader builds a new empty (non-nil) Header.
-// func NewHeader() *Header {
-// 	return new(Header)
-// }
-
-// Add appends a Field to the end of the Header.
-// func (h Header) Add(field Field) {
-// 	if h.Fields == nil {
-// 		h.Fields = []Field{}
-// 	}
-// 	h.Fields = append(h.Fields, field)
-// }
 
 // Render renders the Header fields and returns them in bytes.
 // It writes each field on its own line.
-func (h Header) Render() []byte {
-	bb := make([][]byte, len(h.Fields))
+func (h *Header) Render() ([]byte, error) {
+	fs := make([][]byte, len(h.Fields))
+	var err error
+
+	// render and set each field
 	for i, f := range h.Fields {
-		bb[i] = f.Render()
+		if fs[i], err = f.Render(); err != nil {
+			return nil, err
+		}
 	}
 
-	return bytes.Join(bb, []byte{'\n'})
+	return bytes.Join(fs, []byte{'\n'}), nil
+}
+
+// Boundary queries the Header and tries to find a boundary of the Content-Type.
+// If there's no boundary parameter inside Content-Type ErrNoBoundary is returned.
+func (h *Header) Boundary() ([]byte, error) {
+	// iterate over fields
+	for _, f := range h.Fields {
+		if f.Name == "Content-Type" {
+			// iterate over values
+			for _, v := range f.Values {
+				if strings.Contains(v, "boundary=") {
+					// boundary found
+					return []byte(strings.Trim(strings.TrimPrefix(v, "boundary="), "\"")), nil
+				}
+			}
+		}
+	}
+
+	return nil, ErrNoBoundary
 }
 
 // Field represents a single SMTP Header field.
@@ -40,17 +58,11 @@ type Field struct {
 	Values []string
 }
 
-// NewField constructs a new Field and set the Name to name and
-// its Values to values.
-// func NewField(name string, values ...string) Field {
-// 	return Field{
-// 		Name:   name,
-// 		Values: values,
-// 	}
-// }
-
 // Render renders the content of the field into bytes. It returns formatted
 // SMTP Header Field. The Field's Values are separated with semicolons.
-func (f Field) Render() []byte {
-	return []byte(f.Name + ": " + strings.Join(f.Values, "; "))
+func (f *Field) Render() ([]byte, error) {
+	if len(f.Values) == 0 {
+		return nil, ErrNoValues
+	}
+	return []byte(f.Name + ": " + strings.Join(f.Values, "; ")), nil
 }
