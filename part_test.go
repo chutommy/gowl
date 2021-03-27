@@ -1,9 +1,11 @@
 package gowl_test
 
 import (
+	"errors"
 	"io"
 	"strings"
 	"testing"
+	"testing/iotest"
 
 	"github.com/stretchr/testify/require"
 
@@ -20,7 +22,7 @@ func TestPart_Render(t *testing.T) {
 		name    string
 		fields  fields
 		want    []byte
-		wantErr error
+		wantErr bool
 	}{
 		{
 			name: "plain and html text",
@@ -113,6 +115,92 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 --0000000000001d296f05be7539bd--`,
 			),
 		},
+		{
+			name: "invalid header",
+			fields: fields{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
+						{Name: "Content-Type", Values: nil},
+					},
+				},
+				Parts: []*gowl.Part{
+					{
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
+						Content: strings.NewReader("This is a test message."),
+					},
+					{
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
+						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "plain text",
+			fields: fields{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
+						{Name: "Content-Type", Values: []string{"text/plain"}},
+					},
+				},
+				Content: strings.NewReader("This is a test message."),
+			},
+			want: []byte(`Content-Type: text/plain
+
+This is a test message.`,
+			),
+		},
+		{
+			name: "invalid content",
+			fields: fields{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
+						{Name: "Content-Type", Values: []string{"text/plain"}},
+					},
+				},
+				Content: iotest.ErrReader(errors.New("invalid io.Reader")),
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing boundary in header",
+			fields: fields{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
+						{Name: "Content-Type", Values: []string{"multipart/alternative"}},
+					},
+				},
+				Parts: []*gowl.Part{
+					{
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain", "charset=\"UTF-8\""}}}},
+						Content: strings.NewReader("This is a test message."),
+					},
+					{
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
+						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "invalid reader in parts",
+			fields: fields{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
+						{Name: "Content-Type", Values: []string{"multipart/alternative", "boundary=\"0000000000009c8ab105be4e2cc3\""}},
+					},
+				},
+				Parts: []*gowl.Part{
+					{
+						Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html", "charset=\"UTF-8\""}}}},
+						Content: iotest.ErrReader(errors.New("invalid io.Reader")),
+					},
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -127,9 +215,9 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 			got, err := p.Render()
 
 			// check returned values
-			if tt.wantErr != nil {
+			if tt.wantErr {
 				require.Nil(t, got)
-				require.ErrorIs(t, err, tt.wantErr)
+				require.Error(t, err)
 			} else {
 				require.Equal(t, string(tt.want), string(got))
 				require.Nil(t, err)
