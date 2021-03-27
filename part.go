@@ -2,6 +2,7 @@ package gowl
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 )
 
@@ -19,7 +20,7 @@ func (p *Part) Render() ([]byte, error) {
 
 	head, err := p.Header.Render()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to render header: %w", err)
 	}
 	buf.Write(head)
 
@@ -27,14 +28,14 @@ func (p *Part) Render() ([]byte, error) {
 		buf.Write([]byte{'\n', '\n'})
 
 		if _, err := buf.ReadFrom(p.Content); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to read content: %w", err)
 		}
 	}
 
 	if p.Parts != nil {
 		boundary, err := p.Header.Boundary()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve boundary: %w", err)
 		}
 		bStart := append([]byte{'-', '-'}, boundary...)
 		bEnd := append(bStart, '-', '-')
@@ -46,7 +47,7 @@ func (p *Part) Render() ([]byte, error) {
 
 			part, err := p.Render()
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("failed to render a part: %w", err)
 			}
 			buf.Write(part)
 		}
