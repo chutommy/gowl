@@ -17,34 +17,31 @@ type Part struct {
 func (p *Part) Render() ([]byte, error) {
 	buf := bytes.Buffer{}
 
-	// write header
 	head, err := p.Header.Render()
 	if err != nil {
 		return nil, err
 	}
 	buf.Write(head)
 
-	// write content
-	if cnt := p.Content; cnt != nil {
+	if p.Content != nil {
 		buf.Write([]byte{'\n', '\n'})
+
 		if _, err := buf.ReadFrom(p.Content); err != nil {
 			return nil, err
 		}
 	}
 
 	if p.Parts != nil {
-		// get boundaries
-		bound, err := p.Header.Boundary()
+		boundary, err := p.Header.Boundary()
 		if err != nil {
 			return nil, err
 		}
-		bA := append([]byte{'-', '-'}, bound...) // beginning boundary
-		bB := append(bA, '-', '-')               // ending boundary
+		bStart := append([]byte{'-', '-'}, boundary...)
+		bEnd := append(bStart, '-', '-')
 
-		// write included parts
 		for _, p := range p.Parts {
 			buf.Write([]byte{'\n', '\n'})
-			buf.Write(bA)
+			buf.Write(bStart)
 			buf.WriteRune('\n')
 
 			part, err := p.Render()
@@ -54,9 +51,8 @@ func (p *Part) Render() ([]byte, error) {
 			buf.Write(part)
 		}
 
-		// write ending boundary
 		buf.Write([]byte{'\n', '\n'})
-		buf.Write(bB)
+		buf.Write(bEnd)
 	}
 
 	return buf.Bytes(), nil
