@@ -20,7 +20,7 @@ func (p *Part) Render() ([]byte, error) {
 
 	head, err := p.Header.Render()
 	if err != nil {
-		return nil, fmt.Errorf("failed to render header: %w", err)
+		return nil, fmt.Errorf("failed to render part header: %w", err)
 	}
 	buf.Write(head)
 
@@ -28,14 +28,14 @@ func (p *Part) Render() ([]byte, error) {
 		buf.Write([]byte{'\n', '\n'})
 
 		if _, err := buf.ReadFrom(p.Content); err != nil {
-			return nil, fmt.Errorf("failed to read content: %w", err)
+			return nil, fmt.Errorf("failed to read part content: %w", err)
 		}
 	}
 
 	if p.Parts != nil {
 		boundary, err := p.Header.Boundary()
 		if err != nil {
-			return nil, fmt.Errorf("failed to retrieve boundary: %w", err)
+			return nil, fmt.Errorf("failed to retrieve sub-part boundary: %w", err)
 		}
 		bStart := append([]byte{'-', '-'}, boundary...)
 		bEnd := append(bStart, '-', '-')
@@ -47,7 +47,7 @@ func (p *Part) Render() ([]byte, error) {
 
 			part, err := p.Render()
 			if err != nil {
-				return nil, fmt.Errorf("failed to render a part: %w", err)
+				return nil, fmt.Errorf("failed to render sub-part part: %w", err)
 			}
 			buf.Write(part)
 		}
