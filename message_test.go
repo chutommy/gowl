@@ -1,16 +1,18 @@
-package gowl
+package gowl_test
 
 import (
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+
+	"github.com/chutified/gowl"
 )
 
 func TestMessage_Render(t *testing.T) {
 	type fields struct {
-		Header *Header
-		Root   *Part
+		Header *gowl.Header
+		Root   *gowl.Part
 	}
 	tests := []struct {
 		name    string
@@ -21,25 +23,25 @@ func TestMessage_Render(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Header: &Header{
-					Fields: []*Field{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
 						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
 						{Name: "To", Values: []string{"David Doe <david.doe@example.com>"}},
 					},
 				},
-				Root: &Part{
-					Header: &Header{
-						Fields: []*Field{
+				Root: &gowl.Part{
+					Header: &gowl.Header{
+						Fields: []*gowl.Field{
 							{Name: "Content-Type", Values: []string{"multipart/alternative", `boundary="part_12345"`}},
 						},
 					},
-					Parts: []*Part{
+					Parts: []*gowl.Part{
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -63,25 +65,25 @@ Content-Type: text/html
 		{
 			name: "header error",
 			fields: fields{
-				Header: &Header{
-					Fields: []*Field{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
 						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
 						{Name: "To", Values: nil},
 					},
 				},
-				Root: &Part{
-					Header: &Header{
-						Fields: []*Field{
+				Root: &gowl.Part{
+					Header: &gowl.Header{
+						Fields: []*gowl.Field{
 							{Name: "Content-Type", Values: []string{"multipart/alternative", `boundary="part_12345"`}},
 						},
 					},
-					Parts: []*Part{
+					Parts: []*gowl.Part{
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -92,25 +94,25 @@ Content-Type: text/html
 		{
 			name: "root error",
 			fields: fields{
-				Header: &Header{
-					Fields: []*Field{
+				Header: &gowl.Header{
+					Fields: []*gowl.Field{
 						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
 						{Name: "To", Values: []string{"David Doe <david.doe@example.com>"}},
 					},
 				},
-				Root: &Part{
-					Header: &Header{
-						Fields: []*Field{
+				Root: &gowl.Part{
+					Header: &gowl.Header{
+						Fields: []*gowl.Field{
 							{Name: "Content-Type", Values: []string{"multipart/alternative"}},
 						},
 					},
-					Parts: []*Part{
+					Parts: []*gowl.Part{
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &Header{Fields: []*Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -121,7 +123,7 @@ Content-Type: text/html
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &Message{
+			m := &gowl.Message{
 				Header: tt.fields.Header,
 				Root:   tt.fields.Root,
 			}
