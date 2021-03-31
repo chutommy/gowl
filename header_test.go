@@ -281,11 +281,17 @@ func TestHeader_RemoveField(t *testing.T) {
 	require.Equal(t, fields, got)
 }
 
-	h := gowl.NewHeader(fields)
-	h.Reset()
-
-	require.Equal(t, &gowl.Header{}, h)
-}
+// func TestHeader_Reset(t *testing.T) {
+// 	fields := []*gowl.Field{
+// 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+// 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+// 	}
+//
+// 	h := gowl.NewHeader(fields)
+// 	h.Reset()
+//
+// 	require.Equal(t, &gowl.Header{}, h)
+// }
 
 func TestField_Name(t *testing.T) {
 	name := "From"
