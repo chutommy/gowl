@@ -204,17 +204,12 @@ This is a test message.`,
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// construct Part
 			p := &gowl.Part{
 				Header:  tt.fields.Header,
 				Content: tt.fields.Content,
 				Parts:   tt.fields.Parts,
 			}
-
-			// run Render
 			got, err := p.Render()
-
-			// check returned values
 			if tt.wantErr {
 				require.Nil(t, got)
 				require.Error(t, err)

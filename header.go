@@ -39,6 +39,7 @@ func (h *Header) RemoveField(name string) {
 	for i, f := range h.fields {
 		if f.name == name {
 			h.fields = append(h.fields[:i], h.fields[i+1:]...)
+
 			break
 		}
 	}
@@ -115,7 +116,6 @@ func (f *Field) AddValue(value string) {
 // Param returns the value of the parameter param of the Field f.
 func (f *Field) Param(param string) []byte {
 	param += "="
-
 	for _, v := range f.values {
 		if strings.Contains(v, param) {
 			return []byte(strings.Trim(strings.TrimPrefix(v, param), "\""))

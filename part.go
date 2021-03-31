@@ -22,6 +22,7 @@ func (p *Part) Render() ([]byte, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to render part header: %w", err)
 	}
+
 	buf.Write(head)
 
 	if p.Content != nil {
@@ -37,6 +38,7 @@ func (p *Part) Render() ([]byte, error) {
 		if err != nil {
 			return nil, fmt.Errorf("failed to retrieve sub-part boundary: %w", err)
 		}
+
 		bStart := append([]byte{'-', '-'}, boundary...)
 		bEnd := append(bStart, '-', '-')
 
@@ -49,6 +51,7 @@ func (p *Part) Render() ([]byte, error) {
 			if err != nil {
 				return nil, fmt.Errorf("failed to render sub-part part: %w", err)
 			}
+
 			buf.Write(part)
 		}
 

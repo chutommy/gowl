@@ -120,13 +120,8 @@ func TestField_Render(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// construct Field
 			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
-
-			// run Render
 			got, err := f.Render()
-
-			// check returned values
 			if tt.wantErr != nil {
 				require.Nil(t, got)
 				require.ErrorIs(t, err, tt.wantErr)
@@ -182,13 +177,8 @@ Content-Type: multipart/alternative; boundary="37a48tbyab7wot468rls798t3y5fcz4t"
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// construct Header
 			h := gowl.NewHeader(tt.fields.Fields)
-
-			// run Render
 			got, err := h.Render()
-
-			// check returned values
 			if tt.wantErr != nil {
 				require.Nil(t, got)
 				require.ErrorIs(t, err, tt.wantErr)
@@ -257,7 +247,6 @@ func TestHeader_Fields(t *testing.T) {
 	}
 
 	h := gowl.NewHeader(fields)
-
 	got := h.Fields()
 	require.Equal(t, fields, got)
 }
@@ -274,7 +263,8 @@ func TestHeader_AddField(t *testing.T) {
 		h.AddField(f)
 	}
 
-	require.Equal(t, fields, h.Fields())
+	got := h.Fields()
+	require.Equal(t, fields, got)
 }
 
 func TestHeader_RemoveField(t *testing.T) {
@@ -282,19 +272,14 @@ func TestHeader_RemoveField(t *testing.T) {
 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
 	}
-
 	fields2 := append(fields, gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`}))
+
 	h := gowl.NewHeader(fields2)
 	h.RemoveField("Content-Type")
 
-	require.Equal(t, fields, h.Fields())
+	got := h.Fields()
+	require.Equal(t, fields, got)
 }
-
-func TestHeader_Reset(t *testing.T) {
-	fields := []*gowl.Field{
-		gowl.NewField("From", []string{"<david.smith@example.com>"}),
-		gowl.NewField("To", []string{"<john.doe@example.com>"}),
-	}
 
 	h := gowl.NewHeader(fields)
 	h.Reset()
@@ -304,8 +289,9 @@ func TestHeader_Reset(t *testing.T) {
 
 func TestField_Name(t *testing.T) {
 	name := "From"
-	val := []string{"John Smith <john.smith@example.com>"}
-	f := gowl.NewField(name, val)
+	val := "John Smith <john.smith@example.com>"
+
+	f := gowl.NewField(name, []string{val})
 
 	got := f.Name()
 	require.Equal(t, name, got)
@@ -313,18 +299,20 @@ func TestField_Name(t *testing.T) {
 
 func TestField_Values(t *testing.T) {
 	name := "From"
-	val := []string{"John Smith <john.smith@example.com>"}
-	f := gowl.NewField(name, val)
+	val := "John Smith <john.smith@example.com>"
+
+	f := gowl.NewField(name, []string{val})
 
 	got := f.Values()
-	require.Equal(t, val, got)
+	require.Equal(t, []string{val}, got)
 }
 
 func TestField_SetName(t *testing.T) {
 	name := "From"
 	name2 := "To"
-	val := []string{"<john.smith@example.com>"}
-	f := gowl.NewField(name, val)
+	val := "<john.smith@example.com>"
+
+	f := gowl.NewField(name, []string{val})
 	f.SetName(name2)
 
 	got := f.Name()
@@ -333,23 +321,24 @@ func TestField_SetName(t *testing.T) {
 
 func TestField_SetValues(t *testing.T) {
 	name := "From"
-	val := []string{"John Smith <john.smith@example.com>"}
-	val2 := []string{"David Doe <david.doe@example.com>"}
-	f := gowl.NewField(name, val)
-	f.SetValues(val2)
+	val := "John Smith <john.smith@example.com>"
+	val2 := "David Doe <david.doe@example.com>"
+
+	f := gowl.NewField(name, []string{val})
+	f.SetValues([]string{val2})
 
 	got := f.Values()
-	require.Equal(t, val2, got)
+	require.Equal(t, []string{val2}, got)
 }
 
 func TestField_AddValue(t *testing.T) {
 	name := "Content-Type"
 	val := "text/plain"
 	val2 := "charset=\"UTF-8\""
-	vals := []string{val, val2}
+
 	f := gowl.NewField(name, []string{val})
 	f.AddValue(val2)
 
 	got := f.Values()
-	require.Equal(t, vals, got)
+	require.Equal(t, []string{val, val2}, got)
 }
