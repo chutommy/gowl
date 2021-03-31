@@ -14,16 +14,43 @@ var (
 
 // Header represents SMTP Header.
 type Header struct {
-	Fields []*Field
+	fields []*Field
+}
+
+// NewHeader is a constructor for the Header.
+func NewHeader(fields []*Field) *Header {
+	return &Header{
+		fields: fields,
+	}
+}
+
+// Fields returns a list of fields in the Header h.
+func (h *Header) Fields() []*Field {
+	return h.fields
+}
+
+// AddField appends a given field to the end of the Header fields.
+func (h *Header) AddField(field *Field) {
+	h.fields = append(h.fields, field)
+}
+
+// RemoveField removes a field with a given name in the Header fields.
+func (h *Header) RemoveField(name string) {
+	for i, f := range h.fields {
+		if f.name == name {
+			h.fields = append(h.fields[:i], h.fields[i+1:]...)
+			break
+		}
+	}
 }
 
 // Render renders the Header fields and returns them in bytes.
 // It writes each field on its own line.
 func (h *Header) Render() ([]byte, error) {
-	fs := make([][]byte, len(h.Fields))
+	fs := make([][]byte, len(h.fields))
 
 	var err error
-	for i, f := range h.Fields {
+	for i, f := range h.fields {
 		if fs[i], err = f.Render(); err != nil {
 			return nil, err
 		}
@@ -35,7 +62,7 @@ func (h *Header) Render() ([]byte, error) {
 // Boundary queries the Header and tries to find a boundary of the Content-Type.
 // If there's no boundary parameter inside Content-Type ErrNoBoundary is returned.
 func (h *Header) Boundary() ([]byte, error) {
-	for _, f := range h.Fields {
+	for _, f := range h.fields {
 		if f.name == "Content-Type" {
 			if v := f.Param("boundary"); v != nil {
 				return v, nil

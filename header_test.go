@@ -183,9 +183,7 @@ Content-Type: multipart/alternative; boundary="37a48tbyab7wot468rls798t3y5fcz4t"
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// construct Header
-			h := &gowl.Header{
-				Fields: tt.fields.Fields,
-			}
+			h := gowl.NewHeader(tt.fields.Fields)
 
 			// run Render
 			got, err := h.Render()
@@ -238,9 +236,7 @@ func TestHeader_Boundary(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			h := &gowl.Header{
-				Fields: tt.fields.Fields,
-			}
+			h := gowl.NewHeader(tt.fields.Fields)
 			got, err := h.Boundary()
 			if tt.wantErr != nil {
 				require.ErrorIs(t, err, tt.wantErr)

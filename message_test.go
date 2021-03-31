@@ -23,25 +23,25 @@ func TestMessage_Render(t *testing.T) {
 		{
 			name: "ok",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
 						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
-				},
+				),
 				Root: &gowl.Part{
-					Header: &gowl.Header{
-						Fields: []*gowl.Field{
+					Header: gowl.NewHeader(
+						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
-					},
+					),
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -65,25 +65,25 @@ Content-Type: text/html
 		{
 			name: "header error",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
 						gowl.NewField("To", nil),
 					},
-				},
+				),
 				Root: &gowl.Part{
-					Header: &gowl.Header{
-						Fields: []*gowl.Field{
+					Header: gowl.NewHeader(
+						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
-					},
+					),
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -94,25 +94,25 @@ Content-Type: text/html
 		{
 			name: "root error",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
 						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
-				},
+				),
 				Root: &gowl.Part{
-					Header: &gowl.Header{
-						Fields: []*gowl.Field{
+					Header: gowl.NewHeader(
+						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative"}),
 						},
-					},
+					),
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
+							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},

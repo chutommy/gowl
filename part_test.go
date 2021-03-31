@@ -27,18 +27,18 @@ func TestPart_Render(t *testing.T) {
 		{
 			name: "plain and html text",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000009c8ab105be4e2cc3\""}),
 					},
-				},
+				),
 				Parts: []*gowl.Part{
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("This is a test message."),
 					},
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
 					},
 				},
@@ -61,29 +61,29 @@ Content-Type: text/html; charset="UTF-8"
 		{
 			name: "text with an attachment",
 			fields: fields{
-				Header: &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/mixed", "boundary=\"0000000000001d296f05be7539bd\""})}},
+				Header: gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/mixed", "boundary=\"0000000000001d296f05be7539bd\""})}),
 				Parts: []*gowl.Part{
 					{
-						Header: &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""})}},
+						Header: gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""})}),
 						Parts: []*gowl.Part{
 							{
-								Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}},
+								Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 								Content: strings.NewReader("This is a test file."),
 							},
 							{
-								Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}},
+								Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
 								Content: strings.NewReader("<div dir=\"ltr\">This is a test file.</div>"),
 							},
 						},
 					},
 					{
-						Header: &gowl.Header{
-							Fields: []*gowl.Field{
+						Header: gowl.NewHeader(
+							[]*gowl.Field{
 								gowl.NewField("Content-Type", []string{"text/plain", "charset=\"US-ASCII\"", "name=\"test.txt\""}),
 								gowl.NewField("Content-Disposition", []string{"attachment", "filename=\"test.txt\""}),
 								gowl.NewField("Content-Transfer-Encoding", []string{"base64"}),
 							},
-						},
+						),
 						Content: strings.NewReader(`VGhpcyBpcyBhIHRlc3QgZmlsZS4K`),
 					},
 				},
@@ -118,18 +118,18 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 		{
 			name: "invalid header",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", nil),
 					},
-				},
+				),
 				Parts: []*gowl.Part{
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("This is a test message."),
 					},
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
 					},
 				},
@@ -139,11 +139,11 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 		{
 			name: "plain text",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", []string{"text/plain"}),
 					},
-				},
+				),
 				Content: strings.NewReader("This is a test message."),
 			},
 			want: []byte(`Content-Type: text/plain
@@ -154,11 +154,11 @@ This is a test message.`,
 		{
 			name: "invalid content",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", []string{"text/plain"}),
 					},
-				},
+				),
 				Content: iotest.ErrReader(errors.New("invalid io.Reader")),
 			},
 			wantErr: true,
@@ -166,18 +166,18 @@ This is a test message.`,
 		{
 			name: "missing boundary in header",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", []string{"multipart/alternative"}),
 					},
-				},
+				),
 				Parts: []*gowl.Part{
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("This is a test message."),
 					},
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
 						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
 					},
 				},
@@ -187,14 +187,14 @@ This is a test message.`,
 		{
 			name: "invalid reader in parts",
 			fields: fields{
-				Header: &gowl.Header{
-					Fields: []*gowl.Field{
+				Header: gowl.NewHeader(
+					[]*gowl.Field{
 						gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000009c8ab105be4e2cc3\""}),
 					},
-				},
+				),
 				Parts: []*gowl.Part{
 					{
-						Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}},
+						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
 						Content: iotest.ErrReader(errors.New("invalid io.Reader")),
 					},
 				},
