@@ -123,10 +123,7 @@ Content-Type: text/html
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := &gowl.Message{
-				Header: tt.fields.Header,
-				Root:   tt.fields.Root,
-			}
+			m := gowl.NewMessage(tt.fields.Header, tt.fields.Root)
 			got, err := m.Render()
 			if tt.wantErr {
 				require.Nil(t, got)
