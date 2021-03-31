@@ -25,23 +25,23 @@ func TestMessage_Render(t *testing.T) {
 			fields: fields{
 				Header: &gowl.Header{
 					Fields: []*gowl.Field{
-						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
-						{Name: "To", Values: []string{"David Doe <david.doe@example.com>"}},
+						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
+						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
 				},
 				Root: &gowl.Part{
 					Header: &gowl.Header{
 						Fields: []*gowl.Field{
-							{Name: "Content-Type", Values: []string{"multipart/alternative", `boundary="part_12345"`}},
+							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
 					},
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -67,23 +67,23 @@ Content-Type: text/html
 			fields: fields{
 				Header: &gowl.Header{
 					Fields: []*gowl.Field{
-						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
-						{Name: "To", Values: nil},
+						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
+						gowl.NewField("To", nil),
 					},
 				},
 				Root: &gowl.Part{
 					Header: &gowl.Header{
 						Fields: []*gowl.Field{
-							{Name: "Content-Type", Values: []string{"multipart/alternative", `boundary="part_12345"`}},
+							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
 					},
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},
@@ -96,23 +96,23 @@ Content-Type: text/html
 			fields: fields{
 				Header: &gowl.Header{
 					Fields: []*gowl.Field{
-						{Name: "From", Values: []string{"Johny <john.smith@example.com>"}},
-						{Name: "To", Values: []string{"David Doe <david.doe@example.com>"}},
+						gowl.NewField("From", []string{"Johny <john.smith@example.com>"}),
+						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
 				},
 				Root: &gowl.Part{
 					Header: &gowl.Header{
 						Fields: []*gowl.Field{
-							{Name: "Content-Type", Values: []string{"multipart/alternative"}},
+							gowl.NewField("Content-Type", []string{"multipart/alternative"}),
 						},
 					},
 					Parts: []*gowl.Part{
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/plain"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}},
 							Content: strings.NewReader("This is a test message."),
 						},
 						{
-							Header:  &gowl.Header{Fields: []*gowl.Field{{Name: "Content-Type", Values: []string{"text/html"}}}},
+							Header:  &gowl.Header{Fields: []*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}},
 							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 						},
 					},

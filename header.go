@@ -8,7 +8,7 @@ import (
 
 // Error codes returned by failures to render to SMTP.
 var (
-	ErrNoValues   = errors.New("the attribute Values of Field is empty")
+	ErrNoValues   = errors.New("the attribute values of Field is empty")
 	ErrNoBoundary = errors.New("the Header has no Content-Type field with boundary parameter")
 )
 
@@ -36,7 +36,7 @@ func (h *Header) Render() ([]byte, error) {
 // If there's no boundary parameter inside Content-Type ErrNoBoundary is returned.
 func (h *Header) Boundary() ([]byte, error) {
 	for _, f := range h.Fields {
-		if f.Name == "Content-Type" {
+		if f.name == "Content-Type" {
 			if v := f.Param("boundary"); v != nil {
 				return v, nil
 			}
@@ -48,15 +48,48 @@ func (h *Header) Boundary() ([]byte, error) {
 
 // Field represents a single SMTP Header field.
 type Field struct {
-	Name   string
-	Values []string
+	name   string
+	values []string
+}
+
+// NewField is a constructor of a Field.
+func NewField(name string, values []string) *Field {
+	return &Field{
+		name:   name,
+		values: values,
+	}
+}
+
+// Name returns the Field name.
+func (f *Field) Name() string {
+	return f.name
+}
+
+// Name returns the Field values.
+func (f *Field) Values() []string {
+	return f.values
+}
+
+// SetName rewrites the Field name value.
+func (f *Field) SetName(name string) {
+	f.name = name
+}
+
+// SetName rewrites the Field values value.
+func (f *Field) SetValues(values []string) {
+	f.values = values
+}
+
+// AddValue appends given value to the end of the Field values.
+func (f *Field) AddValue(value string) {
+	f.values = append(f.values, value)
 }
 
 // Param returns the value of the parameter param of the Field f.
 func (f *Field) Param(param string) []byte {
 	param += "="
 
-	for _, v := range f.Values {
+	for _, v := range f.values {
 		if strings.Contains(v, param) {
 			return []byte(strings.Trim(strings.TrimPrefix(v, param), "\""))
 		}
@@ -66,11 +99,11 @@ func (f *Field) Param(param string) []byte {
 }
 
 // Render renders the content of the field into bytes. It returns formatted
-// SMTP Header Field. The Field's Values are separated with semicolons.
+// SMTP Header Field. The Field's values are separated with semicolons.
 func (f *Field) Render() ([]byte, error) {
-	if len(f.Values) == 0 {
+	if len(f.values) == 0 {
 		return nil, ErrNoValues
 	}
 
-	return []byte(f.Name + ": " + strings.Join(f.Values, "; ")), nil
+	return []byte(f.name + ": " + strings.Join(f.values, "; ")), nil
 }

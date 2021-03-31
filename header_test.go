@@ -58,10 +58,7 @@ func TestField_Param(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &gowl.Field{
-				Name:   tt.fields.Name,
-				Values: tt.fields.Values,
-			}
+			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
 			got := f.Param(tt.args.param)
 			require.Equal(t, tt.want, got)
 		})
@@ -124,10 +121,7 @@ func TestField_Render(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// construct Field
-			f := &gowl.Field{
-				Name:   tt.fields.Name,
-				Values: tt.fields.Values,
-			}
+			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
 
 			// run Render
 			got, err := f.Render()
@@ -158,11 +152,11 @@ func TestHeader_Render(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Fields: []*gowl.Field{
-					{Name: "From", Values: []string{"John Doe <john.doe@example.com>"}},
-					{Name: "To", Values: []string{"Thomas Smith <thomas.smith@example.com>"}},
-					{Name: "Date", Values: []string{"Wed, 8 Mar 2021 12:45:10 +0100"}},
-					{Name: "MIME-Version", Values: []string{"1.0"}},
-					{Name: "Content-Type", Values: []string{"multipart/alternative", "boundary=\"37a48tbyab7wot468rls798t3y5fcz4t\""}},
+					gowl.NewField("From", []string{"John Doe <john.doe@example.com>"}),
+					gowl.NewField("To", []string{"Thomas Smith <thomas.smith@example.com>"}),
+					gowl.NewField("Date", []string{"Wed, 8 Mar 2021 12:45:10 +0100"}),
+					gowl.NewField("MIME-Version", []string{"1.0"}),
+					gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"37a48tbyab7wot468rls798t3y5fcz4t\""}),
 				},
 			},
 			want: []byte(`From: John Doe <john.doe@example.com>
@@ -177,10 +171,10 @@ Content-Type: multipart/alternative; boundary="37a48tbyab7wot468rls798t3y5fcz4t"
 			name: "no boundary",
 			fields: fields{
 				Fields: []*gowl.Field{
-					{Name: "From", Values: []string{"John Doe <john.doe@example.com>"}},
-					{Name: "To", Values: []string{"Thomas Smith <thomas.smith@example.com>"}},
-					{Name: "MIME-Version", Values: []string{"1.0"}},
-					{Name: "Content-Type", Values: nil},
+					gowl.NewField("From", []string{"John Doe <john.doe@example.com>"}),
+					gowl.NewField("To", []string{"Thomas Smith <thomas.smith@example.com>"}),
+					gowl.NewField("MIME-", []string{"1.0"}),
+					gowl.NewField("Content-Type", nil),
 				},
 			},
 			wantErr: gowl.ErrNoValues,
@@ -222,9 +216,9 @@ func TestHeader_Boundary(t *testing.T) {
 			name: "ok",
 			fields: fields{
 				Fields: []*gowl.Field{
-					{Name: "From", Values: []string{"<david.smith@example.com>"}},
-					{Name: "To", Values: []string{"<john.doe@example.com>"}},
-					{Name: "Content-Type", Values: []string{"multipart/alternative", `boundary="part_12345"`}},
+					gowl.NewField("From", []string{"<david.smith@example.com>"}),
+					gowl.NewField("To", []string{"<john.doe@example.com>"}),
+					gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 				},
 			},
 			want:    []byte("part_12345"),
@@ -234,9 +228,9 @@ func TestHeader_Boundary(t *testing.T) {
 			name: "no boundary",
 			fields: fields{
 				Fields: []*gowl.Field{
-					{Name: "From", Values: []string{"<david.smith@example.com>"}},
-					{Name: "To", Values: []string{"<john.doe@example.com>"}},
-					{Name: "Content-Type", Values: []string{"text/plain", `charset="UTF-8"`}},
+					gowl.NewField("From", []string{"<david.smith@example.com>"}),
+					gowl.NewField("To", []string{"<john.doe@example.com>"}),
+					gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`}),
 				},
 			},
 			wantErr: gowl.ErrNoBoundary,
