@@ -248,3 +248,108 @@ func TestHeader_Boundary(t *testing.T) {
 		})
 	}
 }
+
+func TestHeader_Fields(t *testing.T) {
+	fields := []*gowl.Field{
+		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+		gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`}),
+	}
+
+	h := gowl.NewHeader(fields)
+
+	got := h.Fields()
+	require.Equal(t, fields, got)
+}
+
+func TestHeader_AddField(t *testing.T) {
+	fields := []*gowl.Field{
+		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+		gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`}),
+	}
+
+	h := gowl.NewHeader(nil)
+	for _, f := range fields {
+		h.AddField(f)
+	}
+
+	require.Equal(t, fields, h.Fields())
+}
+
+func TestHeader_RemoveField(t *testing.T) {
+	fields := []*gowl.Field{
+		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+	}
+
+	fields2 := append(fields, gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`}))
+	h := gowl.NewHeader(fields2)
+	h.RemoveField("Content-Type")
+
+	require.Equal(t, fields, h.Fields())
+}
+
+func TestHeader_Reset(t *testing.T) {
+	fields := []*gowl.Field{
+		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+	}
+
+	h := gowl.NewHeader(fields)
+	h.Reset()
+
+	require.Equal(t, &gowl.Header{}, h)
+}
+
+func TestField_Name(t *testing.T) {
+	name := "From"
+	val := []string{"John Smith <john.smith@example.com>"}
+	f := gowl.NewField(name, val)
+
+	got := f.Name()
+	require.Equal(t, name, got)
+}
+
+func TestField_Values(t *testing.T) {
+	name := "From"
+	val := []string{"John Smith <john.smith@example.com>"}
+	f := gowl.NewField(name, val)
+
+	got := f.Values()
+	require.Equal(t, val, got)
+}
+
+func TestField_SetName(t *testing.T) {
+	name := "From"
+	name2 := "To"
+	val := []string{"<john.smith@example.com>"}
+	f := gowl.NewField(name, val)
+	f.SetName(name2)
+
+	got := f.Name()
+	require.Equal(t, name2, got)
+}
+
+func TestField_SetValues(t *testing.T) {
+	name := "From"
+	val := []string{"John Smith <john.smith@example.com>"}
+	val2 := []string{"David Doe <david.doe@example.com>"}
+	f := gowl.NewField(name, val)
+	f.SetValues(val2)
+
+	got := f.Values()
+	require.Equal(t, val2, got)
+}
+
+func TestField_AddValue(t *testing.T) {
+	name := "Content-Type"
+	val := "text/plain"
+	val2 := "charset=\"UTF-8\""
+	vals := []string{val, val2}
+	f := gowl.NewField(name, []string{val})
+	f.AddValue(val2)
+
+	got := f.Values()
+	require.Equal(t, vals, got)
+}
