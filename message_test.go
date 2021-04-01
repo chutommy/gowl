@@ -29,23 +29,26 @@ func TestMessage_Render(t *testing.T) {
 						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
 				),
-				Root: &gowl.Part{
-					Header: gowl.NewHeader(
+				Root: gowl.NewPart(
+					gowl.NewHeader(
 						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
 					),
-					Parts: []*gowl.Part{
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
-							Content: strings.NewReader("This is a test message."),
-						},
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
-							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
-						},
+					nil,
+					[]*gowl.Part{
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
+							strings.NewReader("This is a test message."),
+							nil,
+						),
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
+							strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
+							nil,
+						),
 					},
-				},
+				),
 			},
 			want: []byte(`From: Johny <john.smith@example.com>
 To: David Doe <david.doe@example.com>Content-Type: multipart/alternative; boundary="part_12345"
@@ -71,23 +74,26 @@ Content-Type: text/html
 						gowl.NewField("To", nil),
 					},
 				),
-				Root: &gowl.Part{
-					Header: gowl.NewHeader(
+				Root: gowl.NewPart(
+					gowl.NewHeader(
 						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 						},
 					),
-					Parts: []*gowl.Part{
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
-							Content: strings.NewReader("This is a test message."),
-						},
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
-							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
-						},
+					nil,
+					[]*gowl.Part{
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
+							strings.NewReader("This is a test message."),
+							nil,
+						),
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
+							strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
+							nil,
+						),
 					},
-				},
+				),
 			},
 			wantErr: true,
 		},
@@ -100,23 +106,26 @@ Content-Type: text/html
 						gowl.NewField("To", []string{"David Doe <david.doe@example.com>"}),
 					},
 				),
-				Root: &gowl.Part{
-					Header: gowl.NewHeader(
+				Root: gowl.NewPart(
+					gowl.NewHeader(
 						[]*gowl.Field{
 							gowl.NewField("Content-Type", []string{"multipart/alternative"}),
 						},
 					),
-					Parts: []*gowl.Part{
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
-							Content: strings.NewReader("This is a test message."),
-						},
-						{
-							Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
-							Content: strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
-						},
+					nil,
+					[]*gowl.Part{
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain"})}),
+							strings.NewReader("This is a test message."),
+							nil,
+						),
+						gowl.NewPart(
+							gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
+							strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
+							nil,
+						),
 					},
-				},
+				),
 			},
 			wantErr: true,
 		},

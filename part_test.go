@@ -33,14 +33,16 @@ func TestPart_Render(t *testing.T) {
 					},
 				),
 				Parts: []*gowl.Part{
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("This is a test message."),
-					},
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
-					},
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+						strings.NewReader("This is a test message."),
+						nil,
+					),
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
+						strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
+						nil,
+					),
 				},
 			},
 			want: []byte(`Content-Type: multipart/alternative; boundary="0000000000009c8ab105be4e2cc3"
@@ -63,29 +65,33 @@ Content-Type: text/html; charset="UTF-8"
 			fields: fields{
 				Header: gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/mixed", "boundary=\"0000000000001d296f05be7539bd\""})}),
 				Parts: []*gowl.Part{
-					{
-						Header: gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""})}),
-						Parts: []*gowl.Part{
-							{
-								Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-								Content: strings.NewReader("This is a test file."),
-							},
-							{
-								Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-								Content: strings.NewReader("<div dir=\"ltr\">This is a test file.</div>"),
-							},
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"multipart/alternative", "boundary=\"0000000000001d296c05be7539bb\""})}),
+						nil,
+						[]*gowl.Part{
+							gowl.NewPart(
+								gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+								strings.NewReader("This is a test file."),
+								nil,
+							),
+							gowl.NewPart(
+								gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
+								strings.NewReader("<div dir=\"ltr\">This is a test file.</div>"),
+								nil,
+							),
 						},
-					},
-					{
-						Header: gowl.NewHeader(
+					),
+					gowl.NewPart(
+						gowl.NewHeader(
 							[]*gowl.Field{
 								gowl.NewField("Content-Type", []string{"text/plain", "charset=\"US-ASCII\"", "name=\"test.txt\""}),
 								gowl.NewField("Content-Disposition", []string{"attachment", "filename=\"test.txt\""}),
 								gowl.NewField("Content-Transfer-Encoding", []string{"base64"}),
 							},
 						),
-						Content: strings.NewReader(`VGhpcyBpcyBhIHRlc3QgZmlsZS4K`),
-					},
+						strings.NewReader(`VGhpcyBpcyBhIHRlc3QgZmlsZS4K`),
+						nil,
+					),
 				},
 			},
 			want: []byte(`Content-Type: multipart/mixed; boundary="0000000000001d296f05be7539bd"
@@ -124,14 +130,17 @@ VGhpcyBpcyBhIHRlc3QgZmlsZS4K
 					},
 				),
 				Parts: []*gowl.Part{
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("This is a test message."),
-					},
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
-					},
+					gowl.NewPart(
+
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+						strings.NewReader("This is a test message."),
+						nil,
+					),
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
+						strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
+						nil,
+					),
 				},
 			},
 			wantErr: true,
@@ -172,14 +181,16 @@ This is a test message.`,
 					},
 				),
 				Parts: []*gowl.Part{
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("This is a test message."),
-					},
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-						Content: strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
-					},
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+						strings.NewReader("This is a test message."),
+						nil,
+					),
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
+						strings.NewReader("<div dir=\"ltr\">This is a test message.</div>"),
+						nil,
+					),
 				},
 			},
 			wantErr: true,
@@ -193,10 +204,11 @@ This is a test message.`,
 					},
 				),
 				Parts: []*gowl.Part{
-					{
-						Header:  gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-						Content: iotest.ErrReader(errors.New("invalid io.Reader")),
-					},
+					gowl.NewPart(
+						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
+						iotest.ErrReader(errors.New("invalid io.Reader")),
+						nil,
+					),
 				},
 			},
 			wantErr: true,
@@ -204,11 +216,11 @@ This is a test message.`,
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &gowl.Part{
-				Header:  tt.fields.Header,
-				Content: tt.fields.Content,
-				Parts:   tt.fields.Parts,
-			}
+			p := gowl.NewPart(
+				tt.fields.Header,
+				tt.fields.Content,
+				tt.fields.Parts,
+			)
 			got, err := p.Render()
 			if tt.wantErr {
 				require.Nil(t, got)
