@@ -14,7 +14,7 @@ type Part struct {
 	Parts   []*Part
 }
 
-// Render renders the Part's content into bytes. It returns formatted SMTP message Part.
+// Render renders the content of the Part into bytes. It returns a formatted SMTP message Part.
 func (p *Part) Render() ([]byte, error) {
 	buf := bytes.Buffer{}
 

@@ -11,7 +11,7 @@ type Message struct {
 	rootPart *Part
 }
 
-// NewMessage is a constructor for the Message.
+// NewMessage is a constructor of the Message.
 func NewMessage(header *Header, rootPart *Part) *Message {
 	return &Message{
 		header:   header,
@@ -24,17 +24,17 @@ func (m *Message) Header() *Header {
 	return m.header
 }
 
-// Root returns the part at the root of the Message.
+// RootPart returns the part at the root of the Message.
 func (m *Message) RootPart() *Part {
 	return m.rootPart
 }
 
-// SetHeader replace the header of the Message with the given Header header.
+// SetHeader replaces the header of the Message with the given Header.
 func (m *Message) SetHeader(header *Header) {
 	m.header = header
 }
 
-// SetHeader replace the part at the root of the Message with the given Part part.
+// SetHeader replaces the part at the root of the Message with the given Part.
 func (m *Message) SetRootPart(rootPart *Part) {
 	m.rootPart = rootPart
 }

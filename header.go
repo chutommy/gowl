@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// Error codes returned by failures to render to SMTP.
+// Error codes returned by failures to render an SMTP data.
 var (
 	ErrNoValues   = errors.New("the attribute values of Field is empty")
 	ErrNoBoundary = errors.New("the Header has no Content-Type field with boundary parameter")
 )
 
-// Header represents SMTP Header.
+// Header represents an SMTP Header.
 type Header struct {
 	fields []*Field
 }
@@ -29,12 +29,12 @@ func (h *Header) Fields() []*Field {
 	return h.fields
 }
 
-// AddField appends a given field to the end of the Header fields.
+// AddField appends a given field to the end of the fields of the Header.
 func (h *Header) AddField(field *Field) {
 	h.fields = append(h.fields, field)
 }
 
-// RemoveField removes a field with a given name in the Header fields.
+// RemoveField removes a field with a given name in the fields of the Header.
 func (h *Header) RemoveField(name string) {
 	for i, f := range h.fields {
 		if f.name == name {
@@ -46,7 +46,7 @@ func (h *Header) RemoveField(name string) {
 }
 
 // Render renders the Header fields and returns them in bytes.
-// It writes each field on its own line.
+// It renders each field on its own line.
 func (h *Header) Render() ([]byte, error) {
 	fs := make([][]byte, len(h.fields))
 
@@ -60,8 +60,8 @@ func (h *Header) Render() ([]byte, error) {
 	return bytes.Join(fs, []byte{'\n'}), nil
 }
 
-// Boundary queries the Header and tries to find a boundary of the Content-Type.
-// If there's no boundary parameter inside Content-Type ErrNoBoundary is returned.
+// Boundary queries the fields of the Header and tries to find a boundary of the Content-Type.
+// If there's no boundary parameter inside its Content-Type ErrNoBoundary is returned.
 func (h *Header) Boundary() ([]byte, error) {
 	for _, f := range h.fields {
 		if f.name == "Content-Type" {
@@ -74,7 +74,7 @@ func (h *Header) Boundary() ([]byte, error) {
 	return nil, ErrNoBoundary
 }
 
-// Field represents a single SMTP Header field.
+// Field represents a single SMTP field of the Header.
 type Field struct {
 	name   string
 	values []string
@@ -88,32 +88,32 @@ func NewField(name string, values []string) *Field {
 	}
 }
 
-// Name returns the Field name.
+// Name returns the name of the Field.
 func (f *Field) Name() string {
 	return f.name
 }
 
-// Name returns the Field values.
+// Values returns the values of the Field.
 func (f *Field) Values() []string {
 	return f.values
 }
 
-// SetName rewrites the Field name value.
+// SetName rewrites the name of the value of the Field.
 func (f *Field) SetName(name string) {
 	f.name = name
 }
 
-// SetName rewrites the Field values value.
+// SetValues rewrites the values value of the Field.
 func (f *Field) SetValues(values []string) {
 	f.values = values
 }
 
-// AddValue appends given value to the end of the Field values.
+// AddValue appends given value to the end of the values of the Field.
 func (f *Field) AddValue(value string) {
 	f.values = append(f.values, value)
 }
 
-// Param returns the value of the parameter param of the Field f.
+// Param returns the value of the parameter param of the Field.
 func (f *Field) Param(param string) []byte {
 	param += "="
 	for _, v := range f.values {
@@ -126,7 +126,7 @@ func (f *Field) Param(param string) []byte {
 }
 
 // Render renders the content of the field into bytes. It returns formatted
-// SMTP Header Field. The Field's values are separated with semicolons.
+// SMTP Field of the Header. The values of the Field are separated by semicolons.
 func (f *Field) Render() ([]byte, error) {
 	if len(f.values) == 0 {
 		return nil, ErrNoValues
