@@ -4,9 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/chutified/gowl"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMessage_Reset(t *testing.T) {
@@ -99,6 +98,7 @@ func TestMessage_Render(t *testing.T) {
 		Header *gowl.Header
 		Root   *gowl.Part
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -215,8 +215,11 @@ Content-Type: text/html
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			m := gowl.NewMessage(tt.fields.Header, tt.fields.Root)
 			got, err := m.Render()
 			if tt.wantErr {

@@ -6,15 +6,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/chutified/gowl"
+	"github.com/stretchr/testify/require"
 )
+
+var ErrInvalidReader = errors.New("invalid io.Reader")
 
 type errReader struct{}
 
-func (r errReader) Read(p []byte) (n int, err error) {
-	return 0, errors.New("invalid io.Reader")
+func (r errReader) Read([]byte) (int, error) {
+	return 0, ErrInvalidReader
 }
 
 func TestPart_Reset(t *testing.T) {
@@ -147,6 +148,7 @@ func TestPart_Render(t *testing.T) {
 		Content io.Reader
 		Parts   []*gowl.Part
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -343,8 +345,11 @@ This is a test message.`,
 			wantErr: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := gowl.NewPart(
 				tt.fields.Header,
 				tt.fields.Content,

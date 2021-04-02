@@ -3,9 +3,8 @@ package gowl_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/chutified/gowl"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHeader_Reset(t *testing.T) {
@@ -74,6 +73,7 @@ func TestHeader_Render(t *testing.T) {
 	type fields struct {
 		Fields []*gowl.Field
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -112,8 +112,11 @@ Content-Type: multipart/alternative; boundary="37a48tbyab7wot468rls798t3y5fcz4t"
 			wantErr: gowl.ErrNoValues,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			h := gowl.NewHeader(tt.fields.Fields)
 			got, err := h.Render()
 			if tt.wantErr != nil {
@@ -133,6 +136,7 @@ func TestHeader_Boundary(t *testing.T) {
 	type fields struct {
 		Fields []*gowl.Field
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -163,8 +167,11 @@ func TestHeader_Boundary(t *testing.T) {
 			wantErr: gowl.ErrNoBoundary,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			h := gowl.NewHeader(tt.fields.Fields)
 			got, err := h.Boundary()
 			if tt.wantErr != nil {
@@ -257,9 +264,11 @@ func TestField_Param(t *testing.T) {
 		Name   string
 		Values []string
 	}
+
 	type args struct {
 		param string
 	}
+
 	tests := []struct {
 		name   string
 		fields fields
@@ -300,8 +309,11 @@ func TestField_Param(t *testing.T) {
 			want: nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
 			got := f.Param(tt.args.param)
 			require.Equal(t, string(tt.want), string(got))
@@ -316,6 +328,7 @@ func TestField_Render(t *testing.T) {
 		Name   string
 		Values []string
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -366,6 +379,8 @@ func TestField_Render(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
 			got, err := f.Render()
 			if tt.wantErr != nil {
