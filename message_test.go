@@ -9,6 +9,67 @@ import (
 	"github.com/chutified/gowl"
 )
 
+func TestMessage_Header(t *testing.T) {
+	h := gowl.NewHeader([]*gowl.Field{
+		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
+		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
+	})
+	msg := gowl.NewMessage(h, nil)
+
+	got := msg.Header()
+
+	require.Equal(t, h, got)
+}
+
+func TestMessage_RootPart(t *testing.T) {
+	rp := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+		strings.NewReader("This is a test message."),
+		nil,
+	)
+	msg := gowl.NewMessage(nil, rp)
+
+	got := msg.RootPart()
+
+	require.Equal(t, rp, got)
+}
+
+func TestMessage_SetHeader(t *testing.T) {
+	h := gowl.NewHeader([]*gowl.Field{
+		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
+		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
+	})
+	h2 := gowl.NewHeader([]*gowl.Field{
+		gowl.NewField("From", []string{"David Doe<david.doe@example.com>"}),
+		gowl.NewField("To", []string{"<marcus.white@example.com>"}),
+	})
+	msg := gowl.NewMessage(h, nil)
+
+	msg.SetHeader(h2)
+	got := msg.Header()
+
+	require.Equal(t, h2, got)
+}
+
+func TestMessage_SetRootPart(t *testing.T) {
+	rp := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+		strings.NewReader("This is a test message."),
+		nil,
+	)
+	rp2 := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
+		strings.NewReader(`<div dir="ltr">This is a test message.<dir>`),
+		nil,
+	)
+	msg := gowl.NewMessage(nil, rp)
+
+	msg.SetRootPart(rp2)
+	got := msg.RootPart()
+
+	require.Equal(t, rp2, got)
+}
+
 func TestMessage_Render(t *testing.T) {
 	type fields struct {
 		Header *gowl.Header
@@ -143,65 +204,4 @@ Content-Type: text/html
 			}
 		})
 	}
-}
-
-func TestMessage_Header(t *testing.T) {
-	h := gowl.NewHeader([]*gowl.Field{
-		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
-		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
-	})
-	msg := gowl.NewMessage(h, nil)
-
-	got := msg.Header()
-
-	require.Equal(t, h, got)
-}
-
-func TestMessage_RootPart(t *testing.T) {
-	rp := gowl.NewPart(
-		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-		strings.NewReader("This is a test message."),
-		nil,
-	)
-	msg := gowl.NewMessage(nil, rp)
-
-	got := msg.RootPart()
-
-	require.Equal(t, rp, got)
-}
-
-func TestMessage_SetHeader(t *testing.T) {
-	h := gowl.NewHeader([]*gowl.Field{
-		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
-		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
-	})
-	h2 := gowl.NewHeader([]*gowl.Field{
-		gowl.NewField("From", []string{"David Doe<david.doe@example.com>"}),
-		gowl.NewField("To", []string{"<marcus.white@example.com>"}),
-	})
-	msg := gowl.NewMessage(h, nil)
-
-	msg.SetHeader(h2)
-	got := msg.Header()
-
-	require.Equal(t, h2, got)
-}
-
-func TestMessage_SetRootPart(t *testing.T) {
-	rp := gowl.NewPart(
-		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
-		strings.NewReader("This is a test message."),
-		nil,
-	)
-	rp2 := gowl.NewPart(
-		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html"})}),
-		strings.NewReader(`<div dir="ltr">This is a test message.<dir>`),
-		nil,
-	)
-	msg := gowl.NewMessage(nil, rp)
-
-	msg.SetRootPart(rp2)
-	got := msg.RootPart()
-
-	require.Equal(t, rp2, got)
 }
