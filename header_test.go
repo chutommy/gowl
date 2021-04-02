@@ -9,6 +9,8 @@ import (
 )
 
 func TestHeader_Fields(t *testing.T) {
+	t.Parallel()
+
 	fields := []*gowl.Field{
 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
@@ -21,6 +23,8 @@ func TestHeader_Fields(t *testing.T) {
 }
 
 func TestHeader_AddField(t *testing.T) {
+	t.Parallel()
+
 	fields := []*gowl.Field{
 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
@@ -37,6 +41,8 @@ func TestHeader_AddField(t *testing.T) {
 }
 
 func TestHeader_RemoveField(t *testing.T) {
+	t.Parallel()
+
 	fields := []*gowl.Field{
 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
@@ -51,6 +57,8 @@ func TestHeader_RemoveField(t *testing.T) {
 }
 
 func TestHeader_Render(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Fields []*gowl.Field
 	}
@@ -108,6 +116,8 @@ Content-Type: multipart/alternative; boundary="37a48tbyab7wot468rls798t3y5fcz4t"
 }
 
 func TestHeader_Boundary(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Fields []*gowl.Field
 	}
@@ -157,6 +167,8 @@ func TestHeader_Boundary(t *testing.T) {
 }
 
 func TestField_Name(t *testing.T) {
+	t.Parallel()
+
 	name := "From"
 	val := "John Smith <john.smith@example.com>"
 
@@ -167,6 +179,8 @@ func TestField_Name(t *testing.T) {
 }
 
 func TestField_Values(t *testing.T) {
+	t.Parallel()
+
 	name := "From"
 	val := "John Smith <john.smith@example.com>"
 
@@ -177,6 +191,8 @@ func TestField_Values(t *testing.T) {
 }
 
 func TestField_SetName(t *testing.T) {
+	t.Parallel()
+
 	name := "From"
 	name2 := "To"
 	val := "<john.smith@example.com>"
@@ -189,6 +205,8 @@ func TestField_SetName(t *testing.T) {
 }
 
 func TestField_SetValues(t *testing.T) {
+	t.Parallel()
+
 	name := "From"
 	val := "John Smith <john.smith@example.com>"
 	val2 := "David Doe <david.doe@example.com>"
@@ -201,6 +219,8 @@ func TestField_SetValues(t *testing.T) {
 }
 
 func TestField_AddValue(t *testing.T) {
+	t.Parallel()
+
 	name := "Content-Type"
 	val := "text/plain"
 	val2 := "charset=\"UTF-8\""
@@ -213,6 +233,8 @@ func TestField_AddValue(t *testing.T) {
 }
 
 func TestField_Param(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Name   string
 		Values []string
@@ -270,6 +292,8 @@ func TestField_Param(t *testing.T) {
 }
 
 func TestField_Render(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Name   string
 		Values []string

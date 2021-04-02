@@ -13,6 +13,8 @@ import (
 )
 
 func TestPart_Header(t *testing.T) {
+	t.Parallel()
+
 	h := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 	})
@@ -36,6 +38,8 @@ func TestPart_Header(t *testing.T) {
 }
 
 func TestPart_Content(t *testing.T) {
+	t.Parallel()
+
 	c := strings.NewReader(`This is a test content.`)
 	part := gowl.NewPart(nil, c, nil)
 
@@ -45,6 +49,8 @@ func TestPart_Content(t *testing.T) {
 }
 
 func TestPart_Parts(t *testing.T) {
+	t.Parallel()
+
 	p := gowl.NewPart(
 		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`})}),
 		strings.NewReader(`This is a test message.`),
@@ -63,6 +69,8 @@ func TestPart_Parts(t *testing.T) {
 }
 
 func TestPart_SetHeader(t *testing.T) {
+	t.Parallel()
+
 	h := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("Content-Type", []string{"text/plain"}),
 	})
@@ -78,6 +86,8 @@ func TestPart_SetHeader(t *testing.T) {
 }
 
 func TestPart_SetContent(t *testing.T) {
+	t.Parallel()
+
 	c := strings.NewReader(`This is a test content.`)
 	c2 := strings.NewReader(`This is a test content #2.`)
 	part := gowl.NewPart(nil, c, nil)
@@ -89,6 +99,8 @@ func TestPart_SetContent(t *testing.T) {
 }
 
 func TestPart_SetParts(t *testing.T) {
+	t.Parallel()
+
 	p := gowl.NewPart(
 		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`})}),
 		strings.NewReader(`This is a test message.`),
@@ -118,6 +130,8 @@ func TestPart_SetParts(t *testing.T) {
 }
 
 func TestPart_Render(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Header  *gowl.Header
 		Content io.Reader

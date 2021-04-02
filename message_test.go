@@ -10,6 +10,8 @@ import (
 )
 
 func TestMessage_Header(t *testing.T) {
+	t.Parallel()
+
 	h := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
 		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
@@ -22,6 +24,8 @@ func TestMessage_Header(t *testing.T) {
 }
 
 func TestMessage_RootPart(t *testing.T) {
+	t.Parallel()
+
 	rp := gowl.NewPart(
 		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 		strings.NewReader("This is a test message."),
@@ -35,6 +39,8 @@ func TestMessage_RootPart(t *testing.T) {
 }
 
 func TestMessage_SetHeader(t *testing.T) {
+	t.Parallel()
+
 	h := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
 		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
@@ -52,6 +58,8 @@ func TestMessage_SetHeader(t *testing.T) {
 }
 
 func TestMessage_SetRootPart(t *testing.T) {
+	t.Parallel()
+
 	rp := gowl.NewPart(
 		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
 		strings.NewReader("This is a test message."),
@@ -71,6 +79,8 @@ func TestMessage_SetRootPart(t *testing.T) {
 }
 
 func TestMessage_Render(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		Header *gowl.Header
 		Root   *gowl.Part
