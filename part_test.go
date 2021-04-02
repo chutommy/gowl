@@ -29,10 +29,9 @@ func TestPart_Reset(t *testing.T) {
 		strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 		nil,
 	)
+
 	np := gowl.NewPart(h, c, []*gowl.Part{p, p2})
-
 	np.Reset()
-
 	require.Equal(t, &gowl.Part{}, np)
 }
 
@@ -42,22 +41,9 @@ func TestPart_Header(t *testing.T) {
 	h := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
 	})
-	// c := strings.NewReader(`This is a test content.`)
-	// p := gowl.NewPart(
-	// 	gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`})}),
-	// 	strings.NewReader(`This is a test message.`),
-	// 	nil,
-	// )
-	// p2 := gowl.NewPart(
-	// 	gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", `charset="UTF-8"`})}),
-	// 	strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
-	// 	nil,
-	// )
+
 	part := gowl.NewPart(h, nil, nil)
-	// part := gowl.NewPart(h, c, []*gowl.Part{p, p2})
-
 	got := part.Header()
-
 	require.Equal(t, h, got)
 }
 
@@ -65,10 +51,9 @@ func TestPart_Content(t *testing.T) {
 	t.Parallel()
 
 	c := strings.NewReader(`This is a test content.`)
+
 	part := gowl.NewPart(nil, c, nil)
-
 	got := part.Content()
-
 	require.Equal(t, c, got)
 }
 
@@ -85,10 +70,9 @@ func TestPart_Parts(t *testing.T) {
 		strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
 		nil,
 	)
+
 	part := gowl.NewPart(nil, nil, []*gowl.Part{p, p2})
-
 	got := part.Parts()
-
 	require.Equal(t, []*gowl.Part{p, p2}, got)
 }
 
@@ -101,11 +85,10 @@ func TestPart_SetHeader(t *testing.T) {
 	h2 := gowl.NewHeader([]*gowl.Field{
 		gowl.NewField("Content-Type", []string{"text/html"}),
 	})
-	part := gowl.NewPart(h, nil, nil)
 
+	part := gowl.NewPart(h, nil, nil)
 	part.SetHeader(h2)
 	got := part.Header()
-
 	require.Equal(t, h2, got)
 }
 
@@ -114,11 +97,10 @@ func TestPart_SetContent(t *testing.T) {
 
 	c := strings.NewReader(`This is a test content.`)
 	c2 := strings.NewReader(`This is a test content #2.`)
-	part := gowl.NewPart(nil, c, nil)
 
+	part := gowl.NewPart(nil, c, nil)
 	part.SetContent(c2)
 	got := part.Content()
-
 	require.Equal(t, c2, got)
 }
 
@@ -145,11 +127,10 @@ func TestPart_SetParts(t *testing.T) {
 		strings.NewReader(`<div dir="ltr">This is a test message #2.</div>`),
 		nil,
 	)
-	part := gowl.NewPart(nil, nil, []*gowl.Part{p, p2})
 
+	part := gowl.NewPart(nil, nil, []*gowl.Part{p, p2})
 	part.SetParts([]*gowl.Part{p3, p4})
 	got := part.Parts()
-
 	require.Equal(t, []*gowl.Part{p3, p4}, got)
 }
 

@@ -21,10 +21,9 @@ func TestMessage_Reset(t *testing.T) {
 		strings.NewReader("This is a test message."),
 		nil,
 	)
+
 	msg := gowl.NewMessage(h, rp)
-
 	msg.Reset()
-
 	require.Equal(t, &gowl.Message{}, msg)
 }
 
@@ -35,10 +34,9 @@ func TestMessage_Header(t *testing.T) {
 		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
 		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
 	})
+
 	msg := gowl.NewMessage(h, nil)
-
 	got := msg.Header()
-
 	require.Equal(t, h, got)
 }
 
@@ -50,10 +48,9 @@ func TestMessage_RootPart(t *testing.T) {
 		strings.NewReader("This is a test message."),
 		nil,
 	)
+
 	msg := gowl.NewMessage(nil, rp)
-
 	got := msg.RootPart()
-
 	require.Equal(t, rp, got)
 }
 
@@ -68,11 +65,10 @@ func TestMessage_SetHeader(t *testing.T) {
 		gowl.NewField("From", []string{"David Doe<david.doe@example.com>"}),
 		gowl.NewField("To", []string{"<marcus.white@example.com>"}),
 	})
-	msg := gowl.NewMessage(h, nil)
 
+	msg := gowl.NewMessage(h, nil)
 	msg.SetHeader(h2)
 	got := msg.Header()
-
 	require.Equal(t, h2, got)
 }
 
@@ -89,11 +85,10 @@ func TestMessage_SetRootPart(t *testing.T) {
 		strings.NewReader(`<div dir="ltr">This is a test message.<dir>`),
 		nil,
 	)
-	msg := gowl.NewMessage(nil, rp)
 
+	msg := gowl.NewMessage(nil, rp)
 	msg.SetRootPart(rp2)
 	got := msg.RootPart()
-
 	require.Equal(t, rp2, got)
 }
 
