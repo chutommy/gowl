@@ -264,7 +264,7 @@ func TestField_Param(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			f := gowl.NewField(tt.fields.Name, tt.fields.Values)
 			got := f.Param(tt.args.param)
-			require.Equal(t, tt.want, got)
+			require.Equal(t, string(tt.want), string(got))
 		})
 	}
 }
