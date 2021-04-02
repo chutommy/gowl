@@ -12,6 +12,30 @@ import (
 	"github.com/chutified/gowl"
 )
 
+func TestPart_Reset(t *testing.T) {
+	t.Parallel()
+
+	h := gowl.NewHeader([]*gowl.Field{
+		gowl.NewField("Content-Type", []string{"multipart/alternative", `boundary="part_12345"`}),
+	})
+	c := strings.NewReader(`This is a test content.`)
+	p := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", `charset="UTF-8"`})}),
+		strings.NewReader(`This is a test message.`),
+		nil,
+	)
+	p2 := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", `charset="UTF-8"`})}),
+		strings.NewReader(`<div dir="ltr">This is a test message.</div>`),
+		nil,
+	)
+	np := gowl.NewPart(h, c, []*gowl.Part{p, p2})
+
+	np.Reset()
+
+	require.Equal(t, &gowl.Part{}, np)
+}
+
 func TestPart_Header(t *testing.T) {
 	t.Parallel()
 

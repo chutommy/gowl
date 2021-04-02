@@ -24,7 +24,12 @@ func NewHeader(fields []*Field) *Header {
 	}
 }
 
-// Fields returns a list of fields in the Header h.
+// Reset resets the value of the Header but it keeps its instance (pointer).
+func (h *Header) Reset() {
+	*h = Header{}
+}
+
+// Fields returns a list of fields in the Header.
 func (h *Header) Fields() []*Field {
 	return h.fields
 }
@@ -86,6 +91,11 @@ func NewField(name string, values []string) *Field {
 		name:   name,
 		values: values,
 	}
+}
+
+// Reset resets the value of the Field but it keeps its instance (pointer).
+func (f *Field) Reset() {
+	*f = Field{}
 }
 
 // Name returns the name of the Field.

@@ -19,6 +19,11 @@ func NewMessage(header *Header, rootPart *Part) *Message {
 	}
 }
 
+// Reset resets the value of the Message but it keeps its instance (pointer).
+func (m *Message) Reset() {
+	*m = Message{}
+}
+
 // Header returns the header of the Message.
 func (m *Message) Header() *Header {
 	return m.header

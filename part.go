@@ -23,6 +23,11 @@ func NewPart(header *Header, content io.Reader, parts []*Part) *Part {
 	}
 }
 
+// Reset resets the value of the Part but it keeps its instance (pointer).
+func (p *Part) Reset() {
+	*p = Part{}
+}
+
 // Header returns a header of the Part.
 func (p *Part) Header() *Header {
 	return p.header

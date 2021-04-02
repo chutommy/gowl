@@ -9,6 +9,25 @@ import (
 	"github.com/chutified/gowl"
 )
 
+func TestMessage_Reset(t *testing.T) {
+	t.Parallel()
+
+	h := gowl.NewHeader([]*gowl.Field{
+		gowl.NewField("From", []string{"John Smith <john.smith@example.com>"}),
+		gowl.NewField("To", []string{"<thomas.harold@example.com>"}),
+	})
+	rp := gowl.NewPart(
+		gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/plain", "charset=\"UTF-8\""})}),
+		strings.NewReader("This is a test message."),
+		nil,
+	)
+	msg := gowl.NewMessage(h, rp)
+
+	msg.Reset()
+
+	require.Equal(t, &gowl.Message{}, msg)
+}
+
 func TestMessage_Header(t *testing.T) {
 	t.Parallel()
 

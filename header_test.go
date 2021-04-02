@@ -8,6 +8,20 @@ import (
 	"github.com/chutified/gowl"
 )
 
+func TestHeader_Reset(t *testing.T) {
+	t.Parallel()
+
+	fields := []*gowl.Field{
+		gowl.NewField("From", []string{"<david.smith@example.com>"}),
+		gowl.NewField("To", []string{"<john.doe@example.com>"}),
+	}
+	h := gowl.NewHeader(fields)
+
+	h.Reset()
+
+	require.Equal(t, &gowl.Header{}, h)
+}
+
 func TestHeader_Fields(t *testing.T) {
 	t.Parallel()
 
@@ -164,6 +178,18 @@ func TestHeader_Boundary(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestField_Reset(t *testing.T) {
+	t.Parallel()
+
+	n := "From"
+	v := "<david.smith@example.com>"
+	f := gowl.NewField(n, []string{v})
+
+	f.Reset()
+
+	require.Equal(t, &gowl.Field{}, f)
 }
 
 func TestField_Name(t *testing.T) {
@@ -360,16 +386,3 @@ func TestField_Render(t *testing.T) {
 		})
 	}
 }
-
-// TODO:
-// func TestHeader_Reset(t *testing.T) {
-// 	fields := []*gowl.Field{
-// 		gowl.NewField("From", []string{"<david.smith@example.com>"}),
-// 		gowl.NewField("To", []string{"<john.doe@example.com>"}),
-// 	}
-//
-// 	h := gowl.NewHeader(fields)
-// 	h.Reset()
-//
-// 	require.Equal(t, &gowl.Header{}, h)
-// }
