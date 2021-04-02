@@ -5,12 +5,17 @@ import (
 	"io"
 	"strings"
 	"testing"
-	"testing/iotest"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/chutified/gowl"
 )
+
+type errReader struct{}
+
+func (r errReader) Read(p []byte) (n int, err error) {
+	return 0, errors.New("invalid io.Reader")
+}
 
 func TestPart_Reset(t *testing.T) {
 	t.Parallel()
@@ -292,7 +297,7 @@ This is a test message.`,
 						gowl.NewField("Content-Type", []string{"text/plain"}),
 					},
 				),
-				Content: iotest.ErrReader(errors.New("invalid io.Reader")),
+				Content: errReader{},
 			},
 			wantErr: true,
 		},
@@ -330,7 +335,7 @@ This is a test message.`,
 				Parts: []*gowl.Part{
 					gowl.NewPart(
 						gowl.NewHeader([]*gowl.Field{gowl.NewField("Content-Type", []string{"text/html", "charset=\"UTF-8\""})}),
-						iotest.ErrReader(errors.New("invalid io.Reader")),
+						errReader{},
 						nil,
 					),
 				},
