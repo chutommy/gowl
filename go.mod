@@ -1,4 +1,4 @@
-module github.com/chutified/gowl
+module github.com/chutommy/gowl
 
 go 1.16
 

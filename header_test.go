@@ -3,7 +3,7 @@ package gowl_test
 import (
 	"testing"
 
-	"github.com/chutified/gowl"
+	"github.com/chutommy/gowl"
 	"github.com/stretchr/testify/require"
 )
 
